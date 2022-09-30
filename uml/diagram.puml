@@ -1,0 +1,70 @@
+@startuml
+package "Billing Context" {
+
+abstract Payment {
+PaymentId id
+OrderId id
+Monet total
+void request()
+void collect()
+}
+
+enum PaymentState {
+New
+Requested
+Collected
+Cancelled
+}
+
+Payment -- PaymentState
+}
+
+package "Sales Context" {
+
+abstract Cart {
+CartId id
+boolean hasItems()
+void add()
+void remove()
+}
+entity CartItem
+Cart *-- CartItem
+
+abstract Order {
+OrderId id
+Money total()
+}
+entity OrderItem
+Order *-- OrderItem
+
+abstract Product {
+ProductId id
+Title title
+Description description
+Money price
+Quantity quantity
+void changeTitle()
+void changeDescription()
+void changeQuantity()
+void changePrice()
+}
+enum ProductState {
+Available
+OutOfStock
+Deleted
+}
+Product -- ProductState
+
+}
+
+package "Delivery Context" {
+
+entity Delivery{
+DeliveryId id
+OrderId orderId
+Address address
+void dispatch()
+}
+
+}
+@enduml

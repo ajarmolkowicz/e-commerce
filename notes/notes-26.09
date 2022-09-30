@@ -1,0 +1,16 @@
+--- REPORT
+
+General overview of what a reader can expect in the report
+Introduction to DDD before tactical patterns
+
+
+Aggregates referencing another aggregates - it is ok to put an association
+
+--- MODEL
+
+Price on OrderItem
+
+
+No operations on enum
+"_" before state
+No association between entity and enum in UML
