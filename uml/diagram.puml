@@ -1,43 +1,51 @@
 @startuml
 package "Billing Context" {
 
-abstract Payment {
+entity Payment {
 PaymentId id
 OrderId id
 Monet total
-void request()
+PaymentState state
 void collect()
 }
 
 enum PaymentState {
-New
-Requested
-Collected
-Cancelled
+_Requested
+_Collected
+_Cancelled
 }
 
-Payment -- PaymentState
 }
 
 package "Sales Context" {
 
-abstract Cart {
+entity Cart {
 CartId id
-boolean hasItems()
+boolean isEmpty()
 void add()
 void remove()
 }
-entity CartItem
+entity CartItem {
+CartItemId id
+ProductId productId
+Title title
+Quantity quantity
+}
 Cart *-- CartItem
 
-abstract Order {
+entity Order {
 OrderId id
+OrderTimte time
 Money total()
 }
-entity OrderItem
+class OrderItem {
+ProductId productId
+Money money
+Quantity quantity
+}
 Order *-- OrderItem
 
-abstract Product {
+entity Product {
 ProductId id
 Title title
 Description description
@@ -48,12 +56,12 @@ void changeDescription()
 void changeQuantity()
 void changePrice()
 }
+
 enum ProductState {
 Available
 OutOfStock
 Deleted
 }
-Product -- ProductState
 
 }
 

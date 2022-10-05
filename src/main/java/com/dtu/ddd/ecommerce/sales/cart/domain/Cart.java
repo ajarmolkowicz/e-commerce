@@ -9,7 +9,7 @@ public class Cart {
   private CartId id;
   private Set<CartItem> items;
 
-  void isEmpty() {
+  boolean isEmpty() {
     throw new UnsupportedOperationException();
   }
 
