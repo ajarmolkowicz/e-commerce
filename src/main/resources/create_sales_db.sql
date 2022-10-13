@@ -1,0 +1,25 @@
+CREATE TABLE IF NOT EXISTS products (
+    id UUID NOT NULL PRIMARY KEY,
+    title VARCHAR(64) NOT NULL,
+    description VARCHAR(256) NOT NULL,
+    price VARCHAR(32) NOT NULL,
+    quantity INT NOT NULL,
+    status VARCHAR(8) NOT NULL,
+    version INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID NOT NULL PRIMARY KEY,
+    items JSON NOT NULL,
+    total VARCHAR(32) NOT NULL,
+    submission_time VARCHAR(256) NOT NULL,
+    shipping_time VARCHAR(256),
+    version INT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS CART_DATABASE_ENTITY (
+    id INTEGER IDENTITY PRIMARY KEY
+    cart_id UUID UNIQUE
+    items JSON NOT NULL,
+    version INT NOT NULL
+);

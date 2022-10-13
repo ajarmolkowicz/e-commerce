@@ -8,7 +8,7 @@ import lombok.ToString;
 public final class Quantity {
   public static final Quantity ZERO = new Quantity(0);
   public static final Quantity ONE = new Quantity(1);
-  private final int quantity;
+  private final Integer quantity;
 
   public Quantity(int quantity) {
     if (quantity < 0) {
@@ -17,7 +17,7 @@ public final class Quantity {
     this.quantity = quantity;
   }
 
-  public int value() {
+  public Integer value() {
     return quantity;
   }
 
@@ -27,5 +27,13 @@ public final class Quantity {
 
   public Quantity add(int addend) {
     return new Quantity(quantity + addend);
+  }
+
+  public Boolean isPositiveOrZero() {
+    return quantity >= 0;
+  }
+
+  public Boolean isGreaterOrEqual(Quantity other) {
+    return this.quantity >= other.value();
   }
 }
