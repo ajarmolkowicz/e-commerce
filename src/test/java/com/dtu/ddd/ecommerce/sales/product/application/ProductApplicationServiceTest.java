@@ -59,20 +59,20 @@ class ProductApplicationServiceTest {
     //THEN
     assertCaptureSatisfies($ -> verify(productRepository).save($.capture()),
         product -> {
-          assertThat(product.getTitle()).isEqualTo(new Title(command.title()));
-          assertThat(product.getDescription()).isEqualTo(new Description(command.description()));
-          assertThat(product.getPrice()).isEqualTo(Money.parse(command.price()));
-          assertThat(product.getQuantity()).isEqualTo(new Quantity(command.quantity()));
+          assertThat(product.getTitle()).isEqualTo(command.getTitle());
+          assertThat(product.getDescription()).isEqualTo(command.getDescription());
+          assertThat(product.getPrice()).isEqualTo(command.getPrice());
+          assertThat(product.getQuantity()).isEqualTo(command.getQuantity());
         }, Product.class);
 
     //AND THEN
     assertCaptureSatisfies($ -> verify(eventPublisher).publish($.capture()),
         event -> {
           assertThat(event.getProductId()).isNotNull();
-          assertThat(event.getTitle()).isEqualTo(new Title(command.title()));
-          assertThat(event.getDescription()).isEqualTo(new Description(command.description()));
-          assertThat(event.getPrice()).isEqualTo(Money.parse(command.price()));
-          assertThat(event.getQuantity()).isEqualTo(new Quantity(command.quantity()));
+          assertThat(event.getTitle()).isEqualTo(command.getTitle());
+          assertThat(event.getDescription()).isEqualTo(command.getDescription());
+          assertThat(event.getPrice()).isEqualTo(command.getPrice());
+          assertThat(event.getQuantity()).isEqualTo(command.getQuantity());
         }, ProductEvents.ProductAdded.class);
   }
 
@@ -82,8 +82,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command =
-        new EditProductTitleCommand(product.getId().id().toString(), "Lord of the rings");
+    final var command = new EditProductTitleCommand(product.getId().id(), "Lord of the rings");
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
 
     //WHEN
@@ -91,12 +90,12 @@ class ProductApplicationServiceTest {
 
     //THEN
     assertCaptureSatisfies($ -> verify(productRepository).save($.capture()),
-        persisted -> assertThat(persisted.getTitle()).isEqualTo(new Title(command.title())),
+        persisted -> assertThat(persisted.getTitle()).isEqualTo(command.getTitle()),
         Product.class);
 
     //AND THEN
     assertCaptureSatisfies($ -> verify(eventPublisher).publish($.capture()),
-        event -> assertThat(event.getTitle()).isEqualTo(new Title(command.title())),
+        event -> assertThat(event.getTitle()).isEqualTo(command.getTitle()),
         ProductEvents.ProductTitleChanged.class);
   }
 
@@ -106,7 +105,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command = new EditProductDescriptionCommand(product.getId().id().toString(),
+    final var command = new EditProductDescriptionCommand(product.getId().id(),
         "No Dumbledore anymore, now it's Gandalf time");
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
 
@@ -115,14 +114,12 @@ class ProductApplicationServiceTest {
 
     //THEN
     assertCaptureSatisfies($ -> verify(productRepository).save($.capture()),
-        persisted -> assertThat(persisted.getDescription()).isEqualTo(
-            new Description(command.description())),
+        persisted -> assertThat(persisted.getDescription()).isEqualTo(command.getDescription()),
         Product.class);
 
     //AND THEN
     assertCaptureSatisfies($ -> verify(eventPublisher).publish($.capture()),
-        event -> assertThat(event.getDescription()).isEqualTo(
-            new Description(command.description())),
+        event -> assertThat(event.getDescription()).isEqualTo(command.getDescription()),
         ProductEvents.ProductDescriptionChanged.class);
   }
 
@@ -132,7 +129,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command = new EditProductPriceCommand(product.getId().id().toString(), "EUR 40");
+    final var command = new EditProductPriceCommand(product.getId().id(), "EUR 40");
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
 
     //WHEN
@@ -155,7 +152,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command = new EditProductQuantityCommand(product.getId().id().toString(), 5);
+    final var command = new EditProductQuantityCommand(product.getId().id(), 5);
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
 
     //WHEN
@@ -178,7 +175,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command = new DeleteProductCommand(product.getId().id().toString());
+    final var command = new DeleteProductCommand(product.getId().id());
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
     when(orderRepository.findNotDeliveredContainingProduct(product.getId())).thenReturn(
         List.of(new Order(Set.of(new OrderItem(product.getId(), product.getPrice(), new Quantity(1)))))
@@ -199,7 +196,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command = new DeleteProductCommand(product.getId().id().toString());
+    final var command = new DeleteProductCommand(product.getId().id());
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
     when(orderRepository.findNotDeliveredContainingProduct(product.getId())).thenReturn(new LinkedList<>());
 

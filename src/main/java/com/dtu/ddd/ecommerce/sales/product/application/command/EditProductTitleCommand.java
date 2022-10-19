@@ -1,4 +1,17 @@
 package com.dtu.ddd.ecommerce.sales.product.application.command;
 
-public record EditProductTitleCommand(String productId, String title) {
+import com.dtu.ddd.ecommerce.sales.product.domain.ProductId;
+import com.dtu.ddd.ecommerce.sales.product.domain.Title;
+import lombok.Getter;
+
+import java.util.UUID;
+
+public final class EditProductTitleCommand {
+    @Getter private final ProductId productId;
+    @Getter private final Title title;
+
+    public EditProductTitleCommand(UUID productId, String title) {
+        this.productId = new ProductId(productId);
+        this.title = new Title(title);
+    }
 }

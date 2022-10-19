@@ -16,27 +16,22 @@ class CartApplicationService {
   private final DomainEventPublisher eventPublisher;
 
   void addProductToCart(AddProductToCartCommand command) {
-    final var cartId = new CartId(command.cartId());
-    final var cart = cartRepository.find(cartId)
-        .orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(cartId));
+    final var cart = cartRepository.find(command.getCartId())
+        .orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(command.getCartId()));
 
-    final var productId = new ProductId(command.productId());
-    final var quantity = new Quantity(command.quantity());
-    cart.add(productId, quantity);
+    cart.add(command.getProductId(), command.getQuantity());
     cartRepository.save(cart);
 
-    eventPublisher.publish(new CartEvents.ProductAddedToCart(cart.getId(), productId, quantity));
+    eventPublisher.publish(new CartEvents.ProductAddedToCart(cart.getId(), command.getProductId(), command.getQuantity()));
   }
 
   void deleteProductFromCart(DeleteProductFromCartCommand command) {
-    final var cartId = new CartId(command.cartId());
-    final var cart = cartRepository.find(cartId)
-        .orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(cartId));
+    final var cart = cartRepository.find(command.getCartId())
+        .orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(command.getCartId()));
 
-    final var productId = new ProductId(command.productId());
-    cart.delete(productId);
+    cart.delete(command.getProductId());
     cartRepository.save(cart);
 
-    eventPublisher.publish(new CartEvents.ProductDeletedFromCart(cart.getId(), productId));
+    eventPublisher.publish(new CartEvents.ProductDeletedFromCart(cart.getId(), command.getProductId()));
   }
 }

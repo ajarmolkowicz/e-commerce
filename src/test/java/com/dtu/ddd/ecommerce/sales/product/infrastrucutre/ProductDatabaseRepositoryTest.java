@@ -48,7 +48,7 @@ class ProductDatabaseRepositoryTest {
 
     //WHEN
     final var toUpdate = saved.get();
-    toUpdate.changeTitle("Lord of the rings");
+    toUpdate.changeTitle(new Title("Lord of the rings"));
     productRepository.save(toUpdate);
 
     //THEN

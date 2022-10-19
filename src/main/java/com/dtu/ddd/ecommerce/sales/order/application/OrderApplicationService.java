@@ -18,14 +18,13 @@ class OrderApplicationService {
   private final DomainEventPublisher eventPublisher;
 
   void submitOrder(SubmitOrderCommand command) {
-    final var cartId = new CartId(command.cartId());
-    final var cart = cartRepository.find(cartId).orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(cartId));
+    final var cart = cartRepository.find(command.getCartId()).orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(command.getCartId()));
     if (!orderService.enoughProductsForAnOrder(cart)) {
-      eventPublisher.publish(new OrderEvents.OrderSubmissionFailed(cartId));
+      eventPublisher.publish(new OrderEvents.OrderSubmissionFailed(command.getCartId()));
     } else {
       final var order = new Order(orderService.assignPricesToItems(cart.getItems()));
       orderRepository.save(order);
-      eventPublisher.publish(new OrderEvents.OrderSubmitted(order.getId(), cartId));
+      eventPublisher.publish(new OrderEvents.OrderSubmitted(order.getId(), command.getCartId()));
     }
   }
 }

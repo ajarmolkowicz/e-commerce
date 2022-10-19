@@ -41,12 +41,12 @@ public class Product {
     this.quantity = quantity;
   }
 
-  public void changeTitle(String title) {
-    this.title = new Title(title);
+  public void changeTitle(Title title) {
+    this.title = title;
   }
 
-  public void changeDescription(String description) {
-    this.description = new Description(description);
+  public void changeDescription(Description description) {
+    this.description = description;
   }
 
   public void changePrice(Money price) {

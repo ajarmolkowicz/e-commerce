@@ -27,10 +27,10 @@ class ProductApplicationService {
 
   void addProduct(AddProductCommand command) {
     final var product = new Product(
-        new Title(command.title()),
-        new Description(command.description()),
-        Money.parse(command.price()),
-        new Quantity(command.quantity())
+        command.getTitle(),
+        command.getDescription(),
+        command.getPrice(),
+        command.getQuantity()
     );
 
     productRepository.save(product);
@@ -39,57 +39,48 @@ class ProductApplicationService {
   }
 
   void editProductTitle(EditProductTitleCommand command) {
-    final var id = new ProductId(UUID.fromString(command.productId()));
-    final var product = productRepository.find(id)
-        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(id));
+    final var product = productRepository.find(command.getProductId())
+        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
-    product.changeTitle(command.title());
+    product.changeTitle(command.getTitle());
     productRepository.save(product);
 
-    eventPublisher.publish(
-        new ProductEvents.ProductTitleChanged(product.getId(), product.getTitle()));
+    eventPublisher.publish(new ProductEvents.ProductTitleChanged(product.getId(), product.getTitle()));
   }
 
   void editProductDescription(EditProductDescriptionCommand command) {
-    final var id = new ProductId(UUID.fromString(command.productId()));
-    final var product = productRepository.find(id)
-        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(id));
+    final var product = productRepository.find(command.getProductId())
+        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
-    product.changeDescription(command.description());
+    product.changeDescription(command.getDescription());
     productRepository.save(product);
 
-    eventPublisher.publish(
-        new ProductEvents.ProductDescriptionChanged(product.getId(), product.getDescription()));
+    eventPublisher.publish(new ProductEvents.ProductDescriptionChanged(product.getId(), product.getDescription()));
   }
 
   void editProductPrice(EditProductPriceCommand command) {
-    final var id = new ProductId(UUID.fromString(command.productId()));
-    final var product = productRepository.find(id)
-        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(id));
+    final var product = productRepository.find(command.getProductId())
+        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
-    product.changePrice(Money.parse(command.money()));
+    product.changePrice(command.getPrice());
     productRepository.save(product);
 
-    eventPublisher.publish(
-        new ProductEvents.ProductPriceChanged(product.getId(), product.getPrice()));
+    eventPublisher.publish(new ProductEvents.ProductPriceChanged(product.getId(), product.getPrice()));
   }
 
   void editProductQuantity(EditProductQuantityCommand command) {
-    final var id = new ProductId(UUID.fromString(command.productId()));
-    final var product = productRepository.find(id)
-        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(id));
+    final var product = productRepository.find(command.getProductId())
+        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
-    product.changeQuantity(new Quantity(command.quantity()));
+    product.changeQuantity(command.getQuantity());
     productRepository.save(product);
 
-    eventPublisher.publish(
-        new ProductEvents.ProductQuantityChanged(product.getId(), product.getQuantity()));
+    eventPublisher.publish(new ProductEvents.ProductQuantityChanged(product.getId(), product.getQuantity()));
   }
 
   void deleteProduct(DeleteProductCommand command) {
-    final var id = new ProductId(UUID.fromString(command.productId()));
-    final var product = productRepository.find(id)
-        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(id));
+    final var product = productRepository.find(command.getProductId())
+        .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
     if (orderRepository.findNotDeliveredContainingProduct(product.getId()).isEmpty()) {
       productRepository.delete(product);
