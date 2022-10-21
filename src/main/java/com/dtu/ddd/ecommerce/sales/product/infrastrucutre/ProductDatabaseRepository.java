@@ -28,7 +28,7 @@ public class ProductDatabaseRepository implements ProductRepository {
     jdbcTemplate.update("UPDATE products SET " +
             "status = ?, " +
             "version = ? " +
-            "WHERE id = ? " +
+            "WHERE product_id = ? " +
             "AND version = ?",
         "DELETED",
         product.getVersion().version() + 1,
@@ -38,7 +38,7 @@ public class ProductDatabaseRepository implements ProductRepository {
 
   @Override public Optional<Product> find(ProductId id) {
     final var p = Try.ofSupplier(
-            () -> of(jdbcTemplate.queryForObject("SELECT p.* FROM products p WHERE p.id = ?",
+            () -> of(jdbcTemplate.queryForObject("SELECT p.* FROM products p WHERE p.product_id = ?",
                 new BeanPropertyRowMapper<>(ProductDatabaseEntity.class), id.id())))
         .getOrElse(none());
     return p.filter(ProductDatabaseEntity::isUsable)
@@ -52,11 +52,12 @@ public class ProductDatabaseRepository implements ProductRepository {
 
   private int insertNew(Product product) {
     return jdbcTemplate.update(
-        "INSERT INTO products VALUES (?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO products VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
         product.getId().id(),
         product.getTitle().title(),
         product.getDescription().description(),
-        product.getPrice().toString(),
+        product.getPrice().getAmount().doubleValue(),
+        product.getPrice().getCurrencyUnit().toString(),
         product.getQuantity().value(),
         "USABLE",
         0);
@@ -67,13 +68,15 @@ public class ProductDatabaseRepository implements ProductRepository {
             "title = ?, " +
             "description = ?, " +
             "price = ?, " +
+            "currency = ?, " +
             "quantity = ?, " +
             "version = ? " +
-            "WHERE id = ? " +
+            "WHERE product_id = ? " +
             "AND version = ?",
         product.getTitle().title(),
         product.getDescription().description(),
-        product.getPrice().toString(),
+        product.getPrice().getAmount().doubleValue(),
+        product.getPrice().getCurrencyUnit().toString(),
         product.getQuantity().value(),
         product.getVersion().version() + 1,
         product.getId().id(),

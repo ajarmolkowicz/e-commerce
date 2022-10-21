@@ -9,14 +9,16 @@ import com.dtu.ddd.ecommerce.shared.aggregates.Version;
 import java.util.UUID;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
 @NoArgsConstructor
 class ProductDatabaseEntity {
-  @Setter UUID id;
+  @Setter UUID product_id;
   @Setter String title;
   @Setter String description;
-  @Setter String price;
+  @Setter Double price;
+  @Setter String currency;
   @Setter Integer quantity;
   @Setter Status status;
   @Setter Integer version;
@@ -29,12 +31,12 @@ class ProductDatabaseEntity {
     return status == Status.USABLE;
   }
 
-  public Product toDomainModel() {
+  Product toDomainModel() {
     return new Product(
-        new ProductId(id),
+        new ProductId(product_id),
         new Title(title),
         new Description(description),
-        Money.parse(price),
+        Money.of(CurrencyUnit.of(currency), price),
         new Quantity(quantity),
         new Version(version)
     );

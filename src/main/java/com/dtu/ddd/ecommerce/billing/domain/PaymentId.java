@@ -7,4 +7,8 @@ public record PaymentId(@NotNull UUID id) {
   public static PaymentId generate() {
     return new PaymentId(UUID.randomUUID());
   }
+  public static PaymentId of(UUID id) {
+    return new PaymentId(id);
+  }
+
 }

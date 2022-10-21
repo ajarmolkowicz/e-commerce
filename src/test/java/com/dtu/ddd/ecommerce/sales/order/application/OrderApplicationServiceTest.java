@@ -88,13 +88,14 @@ class OrderApplicationServiceTest {
     final var captor = ArgumentCaptor.forClass(Order.class);
     verify(orderRepository).save(captor.capture());
     final var captured = captor.getValue();
-    assertThat(captured.getTotal()).isEqualTo(Money.parse("EUR 280"));
+    assertThat(captured.total()).isEqualTo(Money.parse("EUR 280"));
 
     //AND THEN
     assertCaptureSatisfies($ -> verify(eventPublisher).publish($.capture()),
         event -> {
           assertThat(event.getCartId()).isEqualTo(cart.getId());
           assertThat(event.getOrderId()).isEqualTo(captured.getId());
+          assertThat(event.getTotal()).isEqualTo(Money.parse("EUR 280"));
         },
         OrderEvents.OrderSubmitted.class);
   }

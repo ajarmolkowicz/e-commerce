@@ -13,10 +13,12 @@ import org.joda.money.Money;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = SalesTestContext.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 class OrderDatabaseRepositoryTest {
   @Autowired
   private OrderRepository orderRepository;
@@ -48,7 +50,7 @@ class OrderDatabaseRepositoryTest {
             new OrderItem(id2, Money.parse("EUR 100"), new Quantity(1)),
             new OrderItem(id3, Money.parse("EUR 30"), new Quantity(3))
         ),
-        $ -> assertThat($.getTotal()).isEqualTo(Money.parse("EUR 240")),
+        $ -> assertThat($.total()).isEqualTo(Money.parse("EUR 240")),
         $ -> assertThat($.getSubmissionTime()).isNotNull(),
         $ -> assertThat($.getShippingTime()).isNull(),
         $ -> assertThat($.getVersion()).isEqualTo(Version.zero()));

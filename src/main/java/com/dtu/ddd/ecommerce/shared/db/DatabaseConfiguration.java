@@ -1,4 +1,4 @@
-package com.dtu.ddd.ecommerce.sales;
+package com.dtu.ddd.ecommerce.shared.db;
 
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class SalesDatabaseConfiguration extends AbstractJdbcConfiguration {
+public class DatabaseConfiguration extends AbstractJdbcConfiguration {
   @Bean
   JdbcTemplate jdbcTemplate() {
     return new JdbcTemplate(dataSource());
@@ -35,6 +35,7 @@ public class SalesDatabaseConfiguration extends AbstractJdbcConfiguration {
         .generateUniqueName(true)
         .setType(EmbeddedDatabaseType.H2)
         .addScript("create_sales_db.sql")
+        .addScript("create_billing_db.sql")
         .build();
   }
 }

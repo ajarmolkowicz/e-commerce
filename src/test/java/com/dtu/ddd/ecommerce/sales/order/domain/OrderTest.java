@@ -27,6 +27,6 @@ class OrderTest {
     final var order = new Order(items);
 
     //THEN
-    assertThat(order.getTotal()).isEqualTo(Money.parse("EUR 280"));
+    assertThat(order.total()).isEqualTo(Money.parse("EUR 280"));
   }
 }

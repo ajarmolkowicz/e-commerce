@@ -16,23 +16,15 @@ import com.google.gson.reflect.TypeToken;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
 @NoArgsConstructor
 class CartDatabaseEntity {
-  @Id
-  Long id;
-  UUID cart_id;
-  Set<CartDatabaseEntity> items;
-  Integer version;
-
-  public CartDatabaseEntity(UUID id, Set<CartDatabaseEntity> items, Integer version) {
-    this.cart_id = id;
-    this.items = items;
-    this.version = version;
-  }
+  @Setter UUID cart_id;
+  @Setter Integer version;
 
   Cart toDomainModel(Collection<CartItemDatabaseEntity> cartItemDatabaseEntities) {
     return new Cart(

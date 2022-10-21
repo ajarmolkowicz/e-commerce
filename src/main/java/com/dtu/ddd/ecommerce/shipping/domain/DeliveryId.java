@@ -1,4 +1,4 @@
-package com.dtu.ddd.ecommerce.delivery.domain;
+package com.dtu.ddd.ecommerce.shipping.domain;
 
 import java.util.UUID;
 import javax.validation.constraints.NotNull;

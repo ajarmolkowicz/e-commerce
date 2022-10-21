@@ -1,6 +1,6 @@
 package com.dtu.ddd.ecommerce.sales.order.domain;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
-public record ShippingTime(ZonedDateTime time) {
+public record ShippingTime(Instant time) {
 }
