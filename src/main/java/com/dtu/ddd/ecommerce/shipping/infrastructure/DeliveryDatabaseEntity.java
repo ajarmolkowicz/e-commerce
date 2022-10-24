@@ -1,7 +1,7 @@
 package com.dtu.ddd.ecommerce.shipping.infrastructure;
 
 import com.dtu.ddd.ecommerce.shared.aggregates.Version;
-import com.dtu.ddd.ecommerce.shipping.domain.Address;
+import com.dtu.ddd.ecommerce.shared.vo.Address;
 import com.dtu.ddd.ecommerce.shipping.domain.Delivery;
 import com.dtu.ddd.ecommerce.shipping.domain.DeliveryId;
 import com.dtu.ddd.ecommerce.shipping.domain.OrderId;

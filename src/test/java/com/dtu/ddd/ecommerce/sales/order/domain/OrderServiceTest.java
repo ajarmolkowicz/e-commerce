@@ -52,17 +52,14 @@ class OrderServiceTest {
     assertThat(enough).isTrue();
   }
 
-  @DisplayName("Products quantity is {1 ; 3}, product demand {2 ; 2} should not be satisfied")
+  @DisplayName("Products quantity is {1}, product demand {2} should not be satisfied")
   @Test
   void notEnoughProductsForAnOrder() {
     //GIVEN
     final var product1 =  new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(1));
-    final var product2 =  new Product(new Title("Book 2"), new Description("Fantasy book"), Money.parse("EUR 50"), new Quantity(3));
     final var cart = new Cart();
     cart.add(product1.getId(), new Quantity(2));
-    cart.add(product2.getId(), new Quantity(2));
     when(productRepository.find(product1.getId())).thenReturn(Optional.of(product1));
-    when(productRepository.find(product2.getId())).thenReturn(Optional.of(product2));
 
     //WHEN
     final var enough = orderService.enoughProductsForAnOrder(cart);

@@ -7,4 +7,7 @@ public record OrderId(@NotNull UUID id) {
   public static OrderId generate() {
     return new OrderId(UUID.randomUUID());
   }
+  public static OrderId of(UUID id) {
+    return new OrderId(id);
+  }
 }

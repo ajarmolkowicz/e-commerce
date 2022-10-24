@@ -24,7 +24,7 @@ class OrderApplicationService {
     } else {
       final var order = new Order(orderService.assignPricesToItems(cart.getItems()));
       orderRepository.save(order);
-      eventPublisher.publish(new OrderEvents.OrderSubmitted(order.getId(), command.getCartId(), order.total()));
+      eventPublisher.publish(new OrderEvents.OrderSubmitted(order.getId(), command.getCartId(), order.total(), command.getAddress()));
     }
   }
 }

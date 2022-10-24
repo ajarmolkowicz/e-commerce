@@ -3,8 +3,10 @@ package com.dtu.ddd.ecommerce.shipping.infrastructure;
 import com.dtu.ddd.ecommerce.shipping.domain.Delivery;
 import com.dtu.ddd.ecommerce.shipping.domain.DeliveryId;
 import com.dtu.ddd.ecommerce.shipping.domain.DeliveryRepository;
+import com.dtu.ddd.ecommerce.shipping.domain.OrderId;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -28,6 +30,15 @@ public class DeliveryDatabaseRepository implements DeliveryRepository {
     }
 
     @Override
+    public Optional<Delivery> findByOrderId(OrderId id) {
+        final var o = Try.ofSupplier(
+                        () -> of(jdbcTemplate.queryForObject("SELECT d.* FROM deliveries d WHERE d.order_id = ?",
+                                new BeanPropertyRowMapper<>(DeliveryDatabaseEntity.class), id.id())))
+                .getOrElse(none());
+        return o.map($ -> Optional.of($.toDomainModel())).getOrElse(Optional.empty());
+    }
+
+    @Override
     public void save(Delivery delivery) {
         find(delivery.getId())
                 .ifPresentOrElse(
@@ -36,21 +47,29 @@ public class DeliveryDatabaseRepository implements DeliveryRepository {
                 );
     }
 
+    @Override @SneakyThrows
+    public void delete(DeliveryId id) {
+        final var result = jdbcTemplate.update("DELETE FROM deliveries WHERE delivery_id = ?", id.id());
+        if (result == 0) {
+            throw new Exceptions.DeliveryDeleteException(id);
+        }
+    }
+
     private void insertNew(Delivery delivery) {
         jdbcTemplate.update(
-                "INSERT INTO orders VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO deliveries VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 delivery.getId().id(),
                 delivery.getOrderId().id(),
-                delivery.getAddress().getStreet(),
-                delivery.getAddress().getHouseNumber(),
-                delivery.getAddress().getCity(),
-                delivery.getAddress().getZipCode(),
+                delivery.getAddress().street().name(),
+                delivery.getAddress().houseNumber().number(),
+                delivery.getAddress().city().name(),
+                delivery.getAddress().zipCode().code(),
                 delivery.getState().toString(),
                 0);
     }
 
     private void update(Delivery delivery) {
-        final var result = jdbcTemplate.update("UPDATE orders SET " +
+        final var result = jdbcTemplate.update("UPDATE deliveries SET " +
                         "street = ?, " +
                         "house_number = ?, " +
                         "city = ?, " +
@@ -59,10 +78,10 @@ public class DeliveryDatabaseRepository implements DeliveryRepository {
                         "version = ?" +
                         "WHERE delivery_id = ?" +
                         "AND version = ?",
-                delivery.getAddress().getStreet().street(),
-                delivery.getAddress().getHouseNumber().number(),
-                delivery.getAddress().getCity().city(),
-                delivery.getAddress().getZipCode().zipCode(),
+                delivery.getAddress().street().name(),
+                delivery.getAddress().houseNumber().number(),
+                delivery.getAddress().city().name(),
+                delivery.getAddress().zipCode().code(),
                 delivery.getState().toString(),
                 delivery.getVersion().version() + 1,
                 delivery.getId().id(),
@@ -77,6 +96,12 @@ public class DeliveryDatabaseRepository implements DeliveryRepository {
         class DeliveryIsStaleException extends RuntimeException {
             DeliveryIsStaleException(DeliveryId id) {
                 super(format("Delivery: %s aggregate root is stale", id.id()));
+            }
+        }
+
+        class DeliveryDeleteException extends Throwable {
+            DeliveryDeleteException(DeliveryId id) {
+                super(format("Delivery: %s could not be deleted", id.id()));
             }
         }
     }

@@ -34,8 +34,9 @@ public class DatabaseConfiguration extends AbstractJdbcConfiguration {
     return new EmbeddedDatabaseBuilder()
         .generateUniqueName(true)
         .setType(EmbeddedDatabaseType.H2)
-        .addScript("create_sales_db.sql")
         .addScript("create_billing_db.sql")
+        .addScript("create_sales_db.sql")
+        .addScript("create_shipping_db.sql")
         .build();
   }
 }

@@ -5,6 +5,7 @@ import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
 import com.dtu.ddd.ecommerce.sales.order.domain.OrderEvents;
 import com.dtu.ddd.ecommerce.sales.order.domain.OrderId;
 import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
+import com.dtu.ddd.ecommerce.shared.vo.Address;
 import org.joda.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +29,7 @@ class PaymentEventsHandlerTest {
 
     @BeforeEach
     void setUp() {
-        handler = new PaymentEventsHandler(paymentProvider, paymentRepository, eventPublisher);
+        handler = new PaymentEventsHandler(paymentRepository, eventPublisher, paymentProvider);
     }
 
     @DisplayName("Payment collected, should positive result be persisted and success event be published")
@@ -37,10 +38,16 @@ class PaymentEventsHandlerTest {
         //GIVEN
         final var orderId = OrderId.generate();
         final var money = Money.parse("EUR 150");
+        final var address = new Address(
+                new Address.Street("Amager Strandvej 1"),
+                new Address.HouseNumber("st. th."),
+                new Address.City("Copenhagen"),
+                new Address.ZipCode("2300")
+        );
         when(paymentProvider.collect(new ReferenceId(orderId.id()))).thenReturn(true);
 
         //WHEN
-        handler.handle(new OrderEvents.OrderSubmitted(orderId, CartId.generate(), money));
+        handler.handle(new OrderEvents.OrderSubmitted(orderId, CartId.generate(), money, address));
 
         //THEN
         assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()), payment -> {
@@ -57,10 +64,16 @@ class PaymentEventsHandlerTest {
     void paymentCollectionFailed() {
         //GIVEN
         final var orderId = OrderId.generate();
+        final var address = new Address(
+                new Address.Street("Amager Strandvej 1"),
+                new Address.HouseNumber("st. th."),
+                new Address.City("Copenhagen"),
+                new Address.ZipCode("2300")
+        );
         when(paymentProvider.collect(new ReferenceId(orderId.id()))).thenReturn(false);
 
         //WHEN
-        handler.handle(new OrderEvents.OrderSubmitted(orderId, CartId.generate(), Money.parse("EUR 150")));
+        handler.handle(new OrderEvents.OrderSubmitted(orderId, CartId.generate(), Money.parse("EUR 150"), address));
 
         //THEN
         assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()), payment -> {

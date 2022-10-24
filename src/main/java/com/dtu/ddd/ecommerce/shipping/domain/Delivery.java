@@ -1,6 +1,7 @@
 package com.dtu.ddd.ecommerce.shipping.domain;
 
 import com.dtu.ddd.ecommerce.shared.aggregates.Version;
+import com.dtu.ddd.ecommerce.shared.vo.Address;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
@@ -17,6 +18,7 @@ public class Delivery {
     this.id = DeliveryId.generate();
     this.orderId = orderId;
     this.address = address;
+    this.state = State.INITIALIZED;
   }
 
   public Delivery(DeliveryId id, OrderId orderId, Address address, State state, Version version) {
@@ -27,11 +29,11 @@ public class Delivery {
     this.version = version;
   }
 
-  void dispatch() {
-    throw new UnsupportedOperationException();
+  public void dispatch() {
+    this.state = State.IN_DELIVERY;
   }
 
-  public enum State {
-    PREPARED, DELIVERED, CANCELLED
+    public enum State {
+    INITIALIZED, IN_DELIVERY, DELIVERED
   }
 }

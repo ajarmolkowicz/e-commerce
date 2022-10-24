@@ -13,6 +13,8 @@ import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
 import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
 import java.util.Optional;
 import java.util.Set;
+
+import com.dtu.ddd.ecommerce.shared.vo.Address;
 import org.joda.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,7 +55,14 @@ class OrderApplicationServiceTest {
     when(cartRepository.find(cart.getId())).thenReturn(Optional.of(cart));
 
     //WHEN
-    service.submitOrder(new SubmitOrderCommand(cart.getId().id()));
+    service.submitOrder(
+            new SubmitOrderCommand(cart.getId().id(),
+                    new Address.Street("Amager Strandvej 1"),
+                    new Address.HouseNumber("st. th."),
+                    new Address.City("Copenhagen"),
+                    new Address.ZipCode("2300")
+            )
+    );
 
     //THEN
     assertCaptureSatisfies($ -> verify(eventPublisher).publish($.capture()),
@@ -82,7 +91,14 @@ class OrderApplicationServiceTest {
     when(orderService.assignPricesToItems(anySet())).thenReturn(orderItems);
 
     //WHEN
-    service.submitOrder(new SubmitOrderCommand(cart.getId().id()));
+    service.submitOrder(
+            new SubmitOrderCommand(cart.getId().id(),
+                    new Address.Street("Amager Strandvej 1"),
+                    new Address.HouseNumber("st. th."),
+                    new Address.City("Copenhagen"),
+                    new Address.ZipCode("2300")
+            )
+    );
 
     //THEN
     final var captor = ArgumentCaptor.forClass(Order.class);
@@ -96,6 +112,12 @@ class OrderApplicationServiceTest {
           assertThat(event.getCartId()).isEqualTo(cart.getId());
           assertThat(event.getOrderId()).isEqualTo(captured.getId());
           assertThat(event.getTotal()).isEqualTo(Money.parse("EUR 280"));
+          assertThat(event.getAddress()).isEqualTo(new Address(
+                  new Address.Street("Amager Strandvej 1"),
+                  new Address.HouseNumber("st. th."),
+                  new Address.City("Copenhagen"),
+                  new Address.ZipCode("2300")
+          ));
         },
         OrderEvents.OrderSubmitted.class);
   }
