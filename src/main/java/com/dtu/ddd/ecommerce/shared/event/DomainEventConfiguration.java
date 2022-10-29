@@ -10,11 +10,13 @@ public class DomainEventConfiguration {
   @Bean
   DomainEventPublisher eventPublisher(ApplicationEventPublisher applicationEventPublisher) {
     return new DomainEventPublisher() {
-      @Override public void publish(DomainEvent event) {
+      @Override
+      public void publish(DomainEvent event) {
         applicationEventPublisher.publishEvent(event);
       }
 
-      @Override public void publish(Collection<DomainEvent> events) {
+      @Override
+      public void publish(Collection<DomainEvent> events) {
         events.forEach(this::publish);
       }
     };

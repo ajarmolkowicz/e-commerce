@@ -12,16 +12,17 @@ import java.util.UUID;
 
 @NoArgsConstructor
 class OrderItemDatabaseEntity {
-    @Setter UUID product_id;
-    @Setter Double money;
-    @Setter String currency;
-    @Setter Integer quantity;
+  @Setter UUID order_id;
+  @Setter UUID product_id;
+  @Setter Double money;
+  @Setter String currency;
+  @Setter Integer quantity;
 
-    OrderItem toDomainModel() {
-        return new OrderItem(
-                new ProductId(product_id),
-                Money.of(CurrencyUnit.of(currency), money),
-                new Quantity(quantity)
-        );
-    }
+  OrderItem toDomainModel() {
+    return new OrderItem(
+        new ProductId(product_id),
+        Money.of(CurrencyUnit.of(currency), money),
+        new Quantity(quantity)
+    );
+  }
 }

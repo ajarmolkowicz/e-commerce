@@ -12,7 +12,8 @@ import org.jmolecules.ddd.annotation.Entity;
 
 import static java.lang.String.format;
 
-@AggregateRoot @Entity
+@AggregateRoot
+@Entity
 public class Cart {
   @Getter private final CartId id;
   @Getter private final Set<CartItem> items;
@@ -20,6 +21,11 @@ public class Cart {
 
   public Cart() {
     this.id = new CartId(UUID.randomUUID());
+    this.items = new HashSet<>();
+  }
+
+  public Cart(CartId cartId) {
+    this.id = cartId;
     this.items = new HashSet<>();
   }
 
@@ -44,7 +50,7 @@ public class Cart {
     this.items.remove(cartItem);
   }
 
-  interface Exceptions {
+  public interface Exceptions {
     class CartAlreadyContainsProductException extends RuntimeException {
       public CartAlreadyContainsProductException(CartId cartId, ProductId productId) {
         super(format("Cart with id: %s already contains product with id: %s", cartId.id(), productId.id()));

@@ -1,10 +1,9 @@
 package com.dtu.ddd.ecommerce.sales.order.domain;
 
+import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
 import com.dtu.ddd.ecommerce.shared.aggregates.Version;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,11 +12,14 @@ import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
 import org.joda.money.Money;
 
-@AggregateRoot @Entity
+import static java.lang.String.format;
+
+@AggregateRoot
+@Entity
 public class Order {
-  @Getter private OrderId id;
-  private Set<OrderItem> items;
-  @Getter private SubmissionTime submissionTime;
+  @Getter private final OrderId id;
+  private final Set<OrderItem> items;
+  @Getter private final SubmissionTime submissionTime;
   @Getter private ShippingTime shippingTime;
   @Getter private Version version;
 
@@ -35,13 +37,17 @@ public class Order {
     this.version = version;
   }
 
-  public Money total() {
-    return Money.total(items.stream()
-            .map($ -> $.money().multipliedBy($.quantity().value()))
-            .collect(Collectors.toSet()));
-  }
-
   public Set<OrderItem> getItems() {
     return Collections.unmodifiableSet(items);
+  }
+
+  public Money total() {
+    return Money.total(items.stream()
+        .map($ -> $.money().multipliedBy($.quantity().value()))
+        .collect(Collectors.toSet()));
+  }
+
+  public void shipped(ShippingTime time) {
+    this.shippingTime = time;
   }
 }

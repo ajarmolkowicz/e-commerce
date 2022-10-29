@@ -7,11 +7,11 @@ import lombok.Getter;
 import java.util.UUID;
 
 public final class DeleteProductFromCartCommand {
-    @Getter private final CartId cartId;
-    @Getter private final ProductId productId;
+  @Getter private final CartId cartId;
+  @Getter private final ProductId productId;
 
-    public DeleteProductFromCartCommand(UUID cartId, UUID productId) {
-        this.cartId = new CartId(cartId);
-        this.productId = new ProductId(productId);
-    }
+  public DeleteProductFromCartCommand(UUID cartId, UUID productId) {
+    this.cartId = new CartId(cartId);
+    this.productId = new ProductId(productId);
+  }
 }

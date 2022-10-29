@@ -7,12 +7,12 @@ import lombok.Getter;
 import java.util.UUID;
 
 public class SubmitOrderCommand {
-    @Getter private final CartId cartId;
-    @Getter private final Address address;
+  @Getter private final CartId cartId;
+  @Getter private final Address address;
 
-    public SubmitOrderCommand(UUID cartId, Address.Street street, Address.HouseNumber houseNumber, Address.City city, Address.ZipCode zipCode) {
-        this.cartId = new CartId(cartId);
-        this.address = new Address(street, houseNumber, city, zipCode);
-    }
+  public SubmitOrderCommand(UUID cartId, String street, String houseNumber, String city, String zipCode) {
+    this.cartId = new CartId(cartId);
+    this.address = new Address(new Address.Street(street), new Address.HouseNumber(houseNumber), new Address.City(city), new Address.ZipCode(zipCode));
+  }
 }
 

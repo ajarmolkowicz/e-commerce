@@ -13,20 +13,20 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 @Configuration
 @Import({
-        DatabaseConfiguration.class,
-        DomainEventConfiguration.class
+    DatabaseConfiguration.class,
+    DomainEventConfiguration.class
 })
 public class ShippingConfiguration {
-    // -- REPOSITORIES
-    @Bean
-    DeliveryRepository deliveryRepository(JdbcTemplate jdbcTemplate) {
-        return new DeliveryDatabaseRepository(jdbcTemplate);
-    }
 
-    // -- EVENT HANDLERS
-    @Bean
-    ShippingEventsHandler shippingEventsHandler(DeliveryRepository deliveryRepository,
-                                               DomainEventPublisher eventPublisher) {
-        return new ShippingEventsHandler(deliveryRepository, eventPublisher);
-    }
+  // -- APPLICATION
+  @Bean
+  ShippingEventsHandler shippingEventsHandler(DeliveryRepository deliveryRepository, DomainEventPublisher eventPublisher) {
+    return new ShippingEventsHandler(deliveryRepository, eventPublisher);
+  }
+
+  // -- INFRASTRUCTURE
+  @Bean
+  DeliveryRepository deliveryRepository(JdbcTemplate jdbcTemplate) {
+    return new DeliveryDatabaseRepository(jdbcTemplate);
+  }
 }

@@ -42,7 +42,6 @@ class CartApplicationServiceTest {
     final var command = new AddProductToCartCommand(cart.getId().id(), productId.id(), 1);
     when(cartRepository.find(cart.getId())).thenReturn(Optional.of(cart));
 
-
     //WHEN
     service.addProductToCart(command);
 
@@ -71,7 +70,8 @@ class CartApplicationServiceTest {
   @Test
   void deleteProductToCart() {
     //GIVEN
-    final var cart = new Cart(); final var productId = new ProductId(UUID.randomUUID());
+    final var cart = new Cart();
+    final var productId = new ProductId(UUID.randomUUID());
     cart.add(productId, new Quantity(1));
     final var command = new DeleteProductFromCartCommand(cart.getId().id(), productId.id());
     when(cartRepository.find(cart.getId())).thenReturn(Optional.of(cart));

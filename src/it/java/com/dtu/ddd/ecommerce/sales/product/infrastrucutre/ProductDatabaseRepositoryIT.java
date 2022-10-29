@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = SalesTestContext.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class ProductDatabaseRepositoryTest {
+class ProductDatabaseRepositoryIT {
   @Autowired
   private ProductRepository productRepository;
 

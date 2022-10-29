@@ -23,9 +23,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.valid4j.errors.RequireViolation;
 
 import static com.dtu.ddd.ecommerce.utils.Assertions.assertCaptureSatisfies;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.verify;
@@ -55,14 +58,13 @@ class OrderApplicationServiceTest {
     when(cartRepository.find(cart.getId())).thenReturn(Optional.of(cart));
 
     //WHEN
-    service.submitOrder(
-            new SubmitOrderCommand(cart.getId().id(),
-                    new Address.Street("Amager Strandvej 1"),
-                    new Address.HouseNumber("st. th."),
-                    new Address.City("Copenhagen"),
-                    new Address.ZipCode("2300")
-            )
-    );
+    assertThatThrownBy(
+        //WHEN
+        () ->  service.submitOrder(new SubmitOrderCommand(cart.getId().id(), "Amager Strandvej 1", "st. th.", "Copenhagen", "2300"))
+    )
+        //THEN
+        .isInstanceOf(OrderApplicationService.Exceptions.OrderDemandNotSatisfied.class)
+        .hasMessage(format("Product demand of cart with id: %s is not satisfied", cart.getId().id()));
 
     //THEN
     assertCaptureSatisfies($ -> verify(eventPublisher).publish($.capture()),
@@ -92,12 +94,7 @@ class OrderApplicationServiceTest {
 
     //WHEN
     service.submitOrder(
-            new SubmitOrderCommand(cart.getId().id(),
-                    new Address.Street("Amager Strandvej 1"),
-                    new Address.HouseNumber("st. th."),
-                    new Address.City("Copenhagen"),
-                    new Address.ZipCode("2300")
-            )
+        new SubmitOrderCommand(cart.getId().id(), "Amager Strandvej 1", "st. th.", "Copenhagen", "2300")
     );
 
     //THEN
@@ -113,10 +110,10 @@ class OrderApplicationServiceTest {
           assertThat(event.getOrderId()).isEqualTo(captured.getId());
           assertThat(event.getTotal()).isEqualTo(Money.parse("EUR 280"));
           assertThat(event.getAddress()).isEqualTo(new Address(
-                  new Address.Street("Amager Strandvej 1"),
-                  new Address.HouseNumber("st. th."),
-                  new Address.City("Copenhagen"),
-                  new Address.ZipCode("2300")
+              new Address.Street("Amager Strandvej 1"),
+              new Address.HouseNumber("st. th."),
+              new Address.City("Copenhagen"),
+              new Address.ZipCode("2300")
           ));
         },
         OrderEvents.OrderSubmitted.class);

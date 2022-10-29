@@ -12,22 +12,22 @@ import java.util.UUID;
 
 @NoArgsConstructor
 class PaymentDatabaseEntity {
-    @Setter UUID payment_id;
-    @Setter UUID reference_id;
-    @Setter Double total;
-    @Setter String currency;
-    @Setter Instant request_time;
-    @Setter Boolean collection_result;
-    @Setter Integer version;
+  @Setter UUID payment_id;
+  @Setter UUID reference_id;
+  @Setter Double total;
+  @Setter String currency;
+  @Setter Instant request_time;
+  @Setter Boolean collection_result;
+  @Setter Integer version;
 
-    Payment toDomainModel() {
-        return new Payment(
-                PaymentId.of(payment_id),
-                ReferenceId.of(reference_id),
-                Money.of(CurrencyUnit.of(currency), total),
-                new RequestTime(request_time),
-                new CollectionResult(collection_result),
-                new Version(version)
-        );
-    }
+  Payment toDomainModel() {
+    return new Payment(
+        PaymentId.of(payment_id),
+        ReferenceId.of(reference_id),
+        Money.of(CurrencyUnit.of(currency), total),
+        new RequestTime(request_time),
+        new CollectionResult(collection_result),
+        new Version(version)
+    );
+  }
 }

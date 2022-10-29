@@ -8,12 +8,13 @@ import org.joda.money.Money;
 
 import java.time.Instant;
 
-@AggregateRoot @Entity
+@AggregateRoot
+@Entity
 public class Payment {
-  @Getter private PaymentId id;
-  @Getter private ReferenceId referenceId;
-  @Getter private Money total;
-  @Getter private RequestTime requestTime;
+  @Getter private final PaymentId id;
+  @Getter private final ReferenceId referenceId;
+  @Getter private final Money total;
+  @Getter private final RequestTime requestTime;
   @Getter private CollectionResult collectionResult;
   @Getter private Version version;
 

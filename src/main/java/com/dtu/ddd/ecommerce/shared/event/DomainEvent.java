@@ -5,5 +5,6 @@ import java.util.UUID;
 
 public interface DomainEvent {
   UUID getEventId();
+
   Instant getWhen();
 }

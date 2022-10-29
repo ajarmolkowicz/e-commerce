@@ -6,11 +6,12 @@ import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
 
-@AggregateRoot @Entity
+@AggregateRoot
+@Entity
 public class Delivery {
-  @Getter private DeliveryId id;
-  @Getter private OrderId orderId;
-  @Getter private Address address;
+  @Getter private final DeliveryId id;
+  @Getter private final OrderId orderId;
+  @Getter private final Address address;
   @Getter private State state;
   @Getter private Version version;
 
@@ -18,7 +19,7 @@ public class Delivery {
     this.id = DeliveryId.generate();
     this.orderId = orderId;
     this.address = address;
-    this.state = State.INITIALIZED;
+    this.state = State.REGISTERED;
   }
 
   public Delivery(DeliveryId id, OrderId orderId, Address address, State state, Version version) {
@@ -33,7 +34,7 @@ public class Delivery {
     this.state = State.IN_DELIVERY;
   }
 
-    public enum State {
-    INITIALIZED, IN_DELIVERY, DELIVERED
+  public enum State {
+    REGISTERED, IN_DELIVERY
   }
 }

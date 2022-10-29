@@ -5,16 +5,19 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 public interface DeliveryRepository {
-    Optional<Delivery> find(DeliveryId id);
-    Optional<Delivery> findByOrderId(OrderId id);
-    void save(Delivery delivery);
-    void delete(DeliveryId id);
+  Optional<Delivery> find(DeliveryId id);
 
-    interface Exceptions {
-        class DeliveryNotFound extends RuntimeException {
-            public DeliveryNotFound(OrderId orderId) {
-                super(format("Delivery with delivery_id: %s not found", orderId.id().toString()));
-            }
-        }
+  Optional<Delivery> findByOrderId(OrderId id);
+
+  void save(Delivery delivery);
+
+  void delete(DeliveryId id);
+
+  interface Exceptions {
+    class DeliveryNotFound extends RuntimeException {
+      public DeliveryNotFound(OrderId orderId) {
+        super(format("Delivery with order_id: %s not found", orderId.id().toString()));
+      }
     }
+  }
 }

@@ -18,13 +18,15 @@ import static java.lang.String.format;
 public class ProductDatabaseRepository implements ProductRepository {
   private final JdbcTemplate jdbcTemplate;
 
-  @Override public void save(Product product) {
+  @Override
+  public void save(Product product) {
     find(product.getId())
         .map(entity -> update(product))
         .orElseGet(() -> insertNew(product));
   }
 
-  @Override public void delete(Product product) {
+  @Override
+  public void delete(Product product) {
     jdbcTemplate.update("UPDATE products SET " +
             "status = ?, " +
             "version = ? " +
@@ -36,7 +38,8 @@ public class ProductDatabaseRepository implements ProductRepository {
         product.getVersion().version());
   }
 
-  @Override public Optional<Product> find(ProductId id) {
+  @Override
+  public Optional<Product> find(ProductId id) {
     final var p = Try.ofSupplier(
             () -> of(jdbcTemplate.queryForObject("SELECT p.* FROM products p WHERE p.product_id = ?",
                 new BeanPropertyRowMapper<>(ProductDatabaseEntity.class), id.id())))
@@ -46,7 +49,8 @@ public class ProductDatabaseRepository implements ProductRepository {
         .getOrElse(Optional.empty());
   }
 
-  @Override public Set<Product> find(Set<ProductId> ids) {
+  @Override
+  public Set<Product> find(Set<ProductId> ids) {
     return null;
   }
 

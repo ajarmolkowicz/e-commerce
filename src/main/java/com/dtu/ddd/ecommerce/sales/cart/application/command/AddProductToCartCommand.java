@@ -8,12 +8,13 @@ import lombok.Getter;
 import java.util.UUID;
 
 public final class AddProductToCartCommand {
-    @Getter private final CartId cartId;
-    @Getter private final ProductId productId;
-    @Getter private final Quantity quantity;
-    public AddProductToCartCommand(UUID cartId, UUID productId, Integer quantity){
-        this.cartId = new CartId(cartId);
-        this.productId = new ProductId(productId);
-        this.quantity = new Quantity(quantity);
-    }
+  @Getter private final CartId cartId;
+  @Getter private final ProductId productId;
+  @Getter private final Quantity quantity;
+
+  public AddProductToCartCommand(UUID cartId, UUID productId, Integer quantity) {
+    this.cartId = new CartId(cartId);
+    this.productId = new ProductId(productId);
+    this.quantity = new Quantity(quantity);
+  }
 }

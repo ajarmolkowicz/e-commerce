@@ -20,12 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.joda.money.Money;
 
 @RequiredArgsConstructor
-class ProductApplicationService {
+public class ProductApplicationService {
   private final ProductRepository productRepository;
   private final OrderRepository orderRepository;
   private final DomainEventPublisher eventPublisher;
 
-  void addProduct(AddProductCommand command) {
+  public ProductId addProduct(AddProductCommand command) {
     final var product = new Product(
         command.getTitle(),
         command.getDescription(),
@@ -36,9 +36,11 @@ class ProductApplicationService {
     productRepository.save(product);
 
     eventPublisher.publish(new ProductEvents.ProductAdded(product));
+
+    return product.getId();
   }
 
-  void editProductTitle(EditProductTitleCommand command) {
+  public void editProductTitle(EditProductTitleCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
@@ -48,7 +50,7 @@ class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductTitleChanged(product.getId(), product.getTitle()));
   }
 
-  void editProductDescription(EditProductDescriptionCommand command) {
+  public void editProductDescription(EditProductDescriptionCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
@@ -58,7 +60,7 @@ class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductDescriptionChanged(product.getId(), product.getDescription()));
   }
 
-  void editProductPrice(EditProductPriceCommand command) {
+  public void editProductPrice(EditProductPriceCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
@@ -68,7 +70,7 @@ class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductPriceChanged(product.getId(), product.getPrice()));
   }
 
-  void editProductQuantity(EditProductQuantityCommand command) {
+  public void editProductQuantity(EditProductQuantityCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 
@@ -78,7 +80,7 @@ class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductQuantityChanged(product.getId(), product.getQuantity()));
   }
 
-  void deleteProduct(DeleteProductCommand command) {
+  public void deleteProduct(DeleteProductCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
 

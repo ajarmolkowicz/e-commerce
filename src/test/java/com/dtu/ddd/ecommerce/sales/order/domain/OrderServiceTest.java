@@ -38,10 +38,11 @@ class OrderServiceTest {
   @Test
   void enoughProductsForAnOrder() {
     //GIVEN
-    final var product1 =  new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(3));
-    final var product2 =  new Product(new Title("Book 2"), new Description("Fantasy book"), Money.parse("EUR 50"), new Quantity(1));
+    final var product1 = new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(3));
+    final var product2 = new Product(new Title("Book 2"), new Description("Fantasy book"), Money.parse("EUR 50"), new Quantity(1));
     final var cart = new Cart();
-    cart.add(product1.getId(), new Quantity(2)); cart.add(product2.getId(), new Quantity(1));
+    cart.add(product1.getId(), new Quantity(2));
+    cart.add(product2.getId(), new Quantity(1));
     when(productRepository.find(product1.getId())).thenReturn(Optional.of(product1));
     when(productRepository.find(product2.getId())).thenReturn(Optional.of(product2));
 
@@ -56,7 +57,7 @@ class OrderServiceTest {
   @Test
   void notEnoughProductsForAnOrder() {
     //GIVEN
-    final var product1 =  new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(1));
+    final var product1 = new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(1));
     final var cart = new Cart();
     cart.add(product1.getId(), new Quantity(2));
     when(productRepository.find(product1.getId())).thenReturn(Optional.of(product1));
@@ -71,10 +72,11 @@ class OrderServiceTest {
   @Test
   void orderItemPricesAssigned() {
     //GIVEN
-    final var product1 =  new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(3));
-    final var product2 =  new Product(new Title("Book 2"), new Description("Fantasy book"), Money.parse("EUR 50"), new Quantity(1));
+    final var product1 = new Product(new Title("Book 1"), new Description("Adventure book"), Money.parse("EUR 20"), new Quantity(3));
+    final var product2 = new Product(new Title("Book 2"), new Description("Fantasy book"), Money.parse("EUR 50"), new Quantity(1));
     final var cart = new Cart();
-    cart.add(product1.getId(), new Quantity(2)); cart.add(product2.getId(), new Quantity(2));
+    cart.add(product1.getId(), new Quantity(2));
+    cart.add(product2.getId(), new Quantity(2));
     when(productRepository.find(product1.getId())).thenReturn(Optional.of(product1));
     when(productRepository.find(product2.getId())).thenReturn(Optional.of(product2));
 

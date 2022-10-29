@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest(classes = SalesTestContext.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class CartDatabaseRepositoryTest {
+class CartDatabaseRepositoryIT {
   @Autowired
   private CartRepository cartRepository;
 
@@ -50,8 +50,8 @@ class CartDatabaseRepositoryTest {
     final var updated = cartRepository.find(cart.getId());
     assertThat(updated).isNotEmpty();
     assertThat(updated.get()).satisfies(
-            $ -> assertThat($.getItems()).hasSize(3),
-            $ -> assertThat($.getVersion()).isEqualTo(new Version(1)));
+        $ -> assertThat($.getItems()).hasSize(3),
+        $ -> assertThat($.getVersion()).isEqualTo(new Version(1)));
 
     //GIVEN
     final var updateToSucceed = cartRepository.find(cart.getId()).orElseThrow(RuntimeException::new);
@@ -67,8 +67,8 @@ class CartDatabaseRepositoryTest {
     final var updated2 = cartRepository.find(cart.getId());
     assertThat(updated2).isNotEmpty();
     assertThat(updated2.get()).satisfies(
-            $ -> assertThat($.getItems()).hasSize(4),
-            $ -> assertThat($.getVersion()).isEqualTo(new Version(2)));
+        $ -> assertThat($.getItems()).hasSize(4),
+        $ -> assertThat($.getVersion()).isEqualTo(new Version(2)));
     assertThatThrownBy(() -> cartRepository.save(updateToFail)).isInstanceOf(
         CartDatabaseRepository.Exceptions.CartIsStaleException.class);
   }

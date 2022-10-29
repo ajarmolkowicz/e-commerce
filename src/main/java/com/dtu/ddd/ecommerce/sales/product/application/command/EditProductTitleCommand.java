@@ -7,11 +7,11 @@ import lombok.Getter;
 import java.util.UUID;
 
 public final class EditProductTitleCommand {
-    @Getter private final ProductId productId;
-    @Getter private final Title title;
+  @Getter private final ProductId productId;
+  @Getter private final Title title;
 
-    public EditProductTitleCommand(UUID productId, String title) {
-        this.productId = new ProductId(productId);
-        this.title = new Title(title);
-    }
+  public EditProductTitleCommand(UUID productId, String title) {
+    this.productId = new ProductId(productId);
+    this.title = new Title(title);
+  }
 }

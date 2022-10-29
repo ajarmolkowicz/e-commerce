@@ -8,9 +8,9 @@ import org.jmolecules.ddd.annotation.Entity;
 
 @Entity
 public class CartItem {
-  @Getter private CartItemId id;
-  @Getter private ProductId productId;
-  @Getter private Quantity quantity;
+  @Getter private final CartItemId id;
+  @Getter private final ProductId productId;
+  @Getter private final Quantity quantity;
 
   public CartItem(ProductId productId, Quantity quantity) {
     this.id = CartItemId.generate();

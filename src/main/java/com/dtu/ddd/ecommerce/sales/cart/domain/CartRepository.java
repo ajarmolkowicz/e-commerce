@@ -1,11 +1,10 @@
 package com.dtu.ddd.ecommerce.sales.cart.domain;
 
-import com.dtu.ddd.ecommerce.sales.product.domain.ProductId;
 import java.util.Optional;
 
 import static java.lang.String.format;
 
-public interface CartRepository  {
+public interface CartRepository {
   Optional<Cart> find(CartId id);
 
   void save(Cart cart);

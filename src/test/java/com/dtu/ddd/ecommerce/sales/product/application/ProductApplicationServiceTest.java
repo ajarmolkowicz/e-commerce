@@ -51,7 +51,7 @@ class ProductApplicationServiceTest {
   @Test
   void addProduct() {
     //GIVEN
-    final var command = new AddProductCommand("Harry Potter", "The boy who lived", "EUR 50", 10);
+    final var command = new AddProductCommand("Harry Potter", "The boy who lived", 50.0,"EUR", 10);
 
     //WHEN
     service.addProduct(command);
@@ -129,7 +129,7 @@ class ProductApplicationServiceTest {
     //GIVEN
     final var product = new Product(new Title("Harry Potter"), new Description("The boy who lived"),
         Money.parse("EUR 50"), new Quantity(10));
-    final var command = new EditProductPriceCommand(product.getId().id(), "EUR 40");
+    final var command = new EditProductPriceCommand(product.getId().id(), 40.0, "EUR");
     when(productRepository.find(product.getId())).thenReturn(Optional.of(product));
 
     //WHEN

@@ -7,9 +7,11 @@ import static java.lang.String.format;
 
 public interface ProductRepository {
   void save(Product product);
+
   void delete(Product product);
 
   Optional<Product> find(ProductId id);
+
   Set<Product> find(Set<ProductId> ids);
 
   interface Exceptions {

@@ -15,6 +15,7 @@ public class Product {
   @Getter private Money price;
   @Getter private Quantity quantity;
   @Getter private Version version;
+
   public Product(ProductId id, Title title, Description description, Money price, Quantity quantity, Version version) {
     require(id != null, "Id cannot be null");
     require(title != null, "Title cannot be null");
@@ -60,5 +61,9 @@ public class Product {
 
   public Boolean orderableForGivenQuantity(Quantity quantity) {
     return this.quantity.isGreaterOrEqual(quantity);
+  }
+
+  public void ordered(Quantity quantity) {
+    changeQuantity(new Quantity(this.quantity.value() - quantity.value()));
   }
 }
