@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.valid4j.errors.RequireViolation;
 
 import static com.dtu.ddd.ecommerce.utils.Assertions.assertCaptureSatisfies;
 import static java.lang.String.format;

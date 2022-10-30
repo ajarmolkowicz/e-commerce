@@ -3,10 +3,12 @@ package com.dtu.ddd.ecommerce.sales.product.infrastrucutre;
 import com.dtu.ddd.ecommerce.sales.product.domain.Product;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductId;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductRepository;
+import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import io.vavr.control.Try;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.architecture.hexagonal.SecondaryAdapter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -14,6 +16,7 @@ import static io.vavr.control.Option.of;
 import static io.vavr.control.Option.none;
 import static java.lang.String.format;
 
+@SecondaryAdapter
 @RequiredArgsConstructor
 public class ProductDatabaseRepository implements ProductRepository {
   private final JdbcTemplate jdbcTemplate;

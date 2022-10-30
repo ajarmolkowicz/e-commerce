@@ -7,24 +7,24 @@ import com.dtu.ddd.ecommerce.sales.product.application.command.EditProductDescri
 import com.dtu.ddd.ecommerce.sales.product.application.command.EditProductPriceCommand;
 import com.dtu.ddd.ecommerce.sales.product.application.command.EditProductQuantityCommand;
 import com.dtu.ddd.ecommerce.sales.product.application.command.EditProductTitleCommand;
-import com.dtu.ddd.ecommerce.sales.product.domain.Description;
 import com.dtu.ddd.ecommerce.sales.product.domain.Product;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductEvents;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductId;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductRepository;
-import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
-import com.dtu.ddd.ecommerce.sales.product.domain.Title;
 import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.joda.money.Money;
+import org.jmolecules.architecture.cqrs.annotation.CommandHandler;
+import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
+import org.jmolecules.architecture.hexagonal.PrimaryPort;
 
+@PrimaryAdapter
 @RequiredArgsConstructor
 public class ProductApplicationService {
   private final ProductRepository productRepository;
   private final OrderRepository orderRepository;
   private final DomainEventPublisher eventPublisher;
 
+  @CommandHandler
   public ProductId addProduct(AddProductCommand command) {
     final var product = new Product(
         command.getTitle(),
@@ -40,6 +40,7 @@ public class ProductApplicationService {
     return product.getId();
   }
 
+  @CommandHandler
   public void editProductTitle(EditProductTitleCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
@@ -50,6 +51,7 @@ public class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductTitleChanged(product.getId(), product.getTitle()));
   }
 
+  @CommandHandler
   public void editProductDescription(EditProductDescriptionCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
@@ -60,6 +62,7 @@ public class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductDescriptionChanged(product.getId(), product.getDescription()));
   }
 
+  @CommandHandler
   public void editProductPrice(EditProductPriceCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
@@ -70,6 +73,7 @@ public class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductPriceChanged(product.getId(), product.getPrice()));
   }
 
+  @CommandHandler
   public void editProductQuantity(EditProductQuantityCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));
@@ -80,6 +84,7 @@ public class ProductApplicationService {
     eventPublisher.publish(new ProductEvents.ProductQuantityChanged(product.getId(), product.getQuantity()));
   }
 
+  @CommandHandler
   public void deleteProduct(DeleteProductCommand command) {
     final var product = productRepository.find(command.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound(command.getProductId()));

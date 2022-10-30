@@ -6,7 +6,9 @@ import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
 import lombok.Getter;
 
 import java.util.UUID;
+import org.jmolecules.architecture.cqrs.annotation.Command;
 
+@Command
 public final class AddProductToCartCommand {
   @Getter private final CartId cartId;
   @Getter private final ProductId productId;

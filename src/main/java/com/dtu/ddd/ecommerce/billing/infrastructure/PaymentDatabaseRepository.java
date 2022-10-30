@@ -4,8 +4,10 @@ import com.dtu.ddd.ecommerce.billing.domain.CollectionResult;
 import com.dtu.ddd.ecommerce.billing.domain.Payment;
 import com.dtu.ddd.ecommerce.billing.domain.PaymentId;
 import com.dtu.ddd.ecommerce.billing.domain.PaymentRepository;
+import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.architecture.hexagonal.SecondaryAdapter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -15,6 +17,7 @@ import static io.vavr.control.Option.none;
 import static io.vavr.control.Option.of;
 import static java.lang.String.format;
 
+@SecondaryAdapter
 @RequiredArgsConstructor
 public class PaymentDatabaseRepository implements PaymentRepository {
   private final JdbcTemplate jdbcTemplate;

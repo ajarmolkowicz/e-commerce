@@ -7,7 +7,10 @@ public record CartId(UUID id) {
     return new CartId(UUID.randomUUID());
   }
 
+  public static CartId of(UUID id) {
+    return new CartId(id);
+  }
   public static CartId fromString(String id) {
-    return new CartId(UUID.fromString(id));
+    return CartId.of(UUID.fromString(id));
   }
 }

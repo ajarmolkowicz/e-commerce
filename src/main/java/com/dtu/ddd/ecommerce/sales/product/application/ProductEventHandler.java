@@ -12,8 +12,7 @@ public class ProductEventHandler {
   private final ProductRepository productRepository;
   private final OrderRepository orderRepository;
 
-  @EventListener
-  @Order(1)
+  @EventListener @Order(3)
   public void handle(OrderEvents.OrderSubmitted orderSubmitted) {
     final var order = orderRepository.find(orderSubmitted.getOrderId())
         .orElseThrow(() -> new OrderRepository.Exceptions.OrderNotFound(orderSubmitted.getOrderId()));

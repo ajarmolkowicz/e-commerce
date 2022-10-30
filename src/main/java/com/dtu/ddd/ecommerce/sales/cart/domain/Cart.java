@@ -3,20 +3,23 @@ package com.dtu.ddd.ecommerce.sales.cart.domain;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductId;
 import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
 import com.dtu.ddd.ecommerce.shared.aggregates.Version;
+import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 
 import static java.lang.String.format;
 
 @AggregateRoot
 @Entity
 public class Cart {
-  @Getter private final CartId id;
-  @Getter private final Set<CartItem> items;
+  @Identity @Getter private final CartId id;
+  private final Set<CartItem> items;
   @Getter private Version version;
 
   public Cart() {
@@ -35,6 +38,10 @@ public class Cart {
     this.version = version;
   }
 
+  public Set<CartItem> getItems() {
+    return Collections.unmodifiableSet(items);
+  }
+
   public void add(ProductId productId, Quantity quantity) {
     this.items.stream().filter($ -> $.getProductId().equals(productId)).findAny().ifPresent($ -> {
       throw new Exceptions.CartAlreadyContainsProductException(this.id, productId);
@@ -50,14 +57,18 @@ public class Cart {
     this.items.remove(cartItem);
   }
 
+  public void clear() {
+    items.clear();
+  }
+
   public interface Exceptions {
-    class CartAlreadyContainsProductException extends RuntimeException {
+    class CartAlreadyContainsProductException extends BusinessException {
       public CartAlreadyContainsProductException(CartId cartId, ProductId productId) {
         super(format("Cart with id: %s already contains product with id: %s", cartId.id(), productId.id()));
       }
     }
 
-    class CartDoesNotContainProductException extends RuntimeException {
+    class CartDoesNotContainProductException extends BusinessException {
       public CartDoesNotContainProductException(CartId cartId, ProductId productId) {
         super(format("Cart with id: %s does not contain product with id: %s", cartId.id(), productId.id()));
       }

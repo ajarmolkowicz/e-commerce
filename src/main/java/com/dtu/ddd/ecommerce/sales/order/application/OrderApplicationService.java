@@ -10,9 +10,13 @@ import com.dtu.ddd.ecommerce.sales.order.domain.OrderService;
 import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
 import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.architecture.cqrs.annotation.CommandHandler;
+import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
+import org.jmolecules.architecture.hexagonal.PrimaryPort;
 
 import static java.lang.String.format;
 
+@PrimaryAdapter
 @RequiredArgsConstructor
 public class OrderApplicationService {
   private final OrderRepository orderRepository;
@@ -20,6 +24,7 @@ public class OrderApplicationService {
   private final OrderService orderService;
   private final DomainEventPublisher eventPublisher;
 
+  @CommandHandler
   public void submitOrder(SubmitOrderCommand command) {
     final var cart = cartRepository.find(command.getCartId()).orElseThrow(() -> new CartRepository.Exceptions.CartNotFound(command.getCartId()));
     if (!orderService.enoughProductsForAnOrder(cart)) {

@@ -1,8 +1,10 @@
 package com.dtu.ddd.ecommerce.sales.cart.infrastructure;
 
 import com.dtu.ddd.ecommerce.sales.cart.domain.*;
+import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.architecture.hexagonal.SecondaryAdapter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -14,6 +16,7 @@ import static io.vavr.control.Option.none;
 import static io.vavr.control.Option.of;
 import static java.lang.String.format;
 
+@SecondaryAdapter
 @RequiredArgsConstructor
 public class CartDatabaseRepository implements CartRepository {
   private final JdbcTemplate jdbcTemplate;

@@ -5,7 +5,9 @@ import com.dtu.ddd.ecommerce.sales.product.domain.Title;
 import lombok.Getter;
 
 import java.util.UUID;
+import org.jmolecules.architecture.cqrs.annotation.Command;
 
+@Command
 public final class EditProductTitleCommand {
   @Getter private final ProductId productId;
   @Getter private final Title title;

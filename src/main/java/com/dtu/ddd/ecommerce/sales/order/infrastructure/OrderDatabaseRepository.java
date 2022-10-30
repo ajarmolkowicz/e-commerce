@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.architecture.hexagonal.SecondaryAdapter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -24,6 +25,7 @@ import static io.vavr.control.Option.none;
 import static io.vavr.control.Option.of;
 import static java.lang.String.format;
 
+@SecondaryAdapter
 @RequiredArgsConstructor
 public class OrderDatabaseRepository implements OrderRepository {
   private final JdbcTemplate jdbcTemplate;

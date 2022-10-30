@@ -59,7 +59,7 @@ public class Product {
     this.quantity = quantity;
   }
 
-  public Boolean orderableForGivenQuantity(Quantity quantity) {
+  public Boolean enoughInStock(Quantity quantity) {
     return this.quantity.isGreaterOrEqual(quantity);
   }
 

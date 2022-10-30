@@ -5,7 +5,9 @@ import com.dtu.ddd.ecommerce.shared.vo.Address;
 import lombok.Getter;
 
 import java.util.UUID;
+import org.jmolecules.architecture.cqrs.annotation.Command;
 
+@Command
 public class SubmitOrderCommand {
   @Getter private final CartId cartId;
   @Getter private final Address address;

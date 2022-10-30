@@ -5,10 +5,11 @@ import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
 import java.util.UUID;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 
 @Entity
 public class CartItem {
-  @Getter private final CartItemId id;
+  @Identity @Getter private final CartItemId id;
   @Getter private final ProductId productId;
   @Getter private final Quantity quantity;
 

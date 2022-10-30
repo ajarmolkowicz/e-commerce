@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import org.jmolecules.ddd.annotation.AggregateRoot;
 import org.jmolecules.ddd.annotation.Entity;
+import org.jmolecules.ddd.annotation.Identity;
 import org.joda.money.Money;
 
 import static java.lang.String.format;
@@ -17,7 +18,7 @@ import static java.lang.String.format;
 @AggregateRoot
 @Entity
 public class Order {
-  @Getter private final OrderId id;
+  @Identity @Getter private final OrderId id;
   private final Set<OrderItem> items;
   @Getter private final SubmissionTime submissionTime;
   @Getter private ShippingTime shippingTime;

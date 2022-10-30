@@ -1,5 +1,6 @@
 package com.dtu.ddd.ecommerce.shipping.infrastructure;
 
+import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import com.dtu.ddd.ecommerce.shipping.domain.Delivery;
 import com.dtu.ddd.ecommerce.shipping.domain.DeliveryId;
 import com.dtu.ddd.ecommerce.shipping.domain.DeliveryRepository;
@@ -7,6 +8,7 @@ import com.dtu.ddd.ecommerce.shipping.domain.OrderId;
 import io.vavr.control.Try;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.jmolecules.architecture.hexagonal.SecondaryAdapter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -16,6 +18,7 @@ import static io.vavr.control.Option.none;
 import static io.vavr.control.Option.of;
 import static java.lang.String.format;
 
+@SecondaryAdapter
 @RequiredArgsConstructor
 public class DeliveryDatabaseRepository implements DeliveryRepository {
   private final JdbcTemplate jdbcTemplate;
@@ -100,7 +103,7 @@ public class DeliveryDatabaseRepository implements DeliveryRepository {
       }
     }
 
-    class DeliveryDeleteException extends Throwable {
+    class DeliveryDeleteException extends RuntimeException {
       DeliveryDeleteException(DeliveryId id) {
         super(format("Delivery: %s could not be deleted", id.id()));
       }

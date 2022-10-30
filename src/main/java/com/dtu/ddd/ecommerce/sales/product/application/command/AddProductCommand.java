@@ -4,9 +4,11 @@ import com.dtu.ddd.ecommerce.sales.product.domain.Description;
 import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
 import com.dtu.ddd.ecommerce.sales.product.domain.Title;
 import lombok.Getter;
+import org.jmolecules.architecture.cqrs.annotation.Command;
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 
+@Command
 public final class AddProductCommand {
   @Getter private final Title title;
   @Getter private final Description description;

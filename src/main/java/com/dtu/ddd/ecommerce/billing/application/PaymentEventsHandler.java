@@ -1,8 +1,11 @@
 package com.dtu.ddd.ecommerce.billing.application;
 
 import com.dtu.ddd.ecommerce.billing.domain.*;
+import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
 import com.dtu.ddd.ecommerce.sales.order.domain.OrderEvents;
+import com.dtu.ddd.ecommerce.sales.order.domain.OrderId;
 import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
+import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import io.vavr.API;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -10,6 +13,7 @@ import org.springframework.core.annotation.Order;
 
 import static io.vavr.API.$;
 import static io.vavr.API.Case;
+import static java.lang.String.format;
 
 @RequiredArgsConstructor
 public class PaymentEventsHandler {
@@ -25,8 +29,19 @@ public class PaymentEventsHandler {
 
     paymentRepository.save(payment);
 
-    eventPublisher.publish(API.Match(result)
-        .of(Case($(CollectionResult::collected), () -> new PaymentEvents.PaymentCollected(payment.getReferenceId())),
-            Case($(), () -> new PaymentEvents.PaymentCollectionFailed(payment.getReferenceId()))));
+    if(result.collected()) {
+      eventPublisher.publish(new PaymentEvents.PaymentCollected(payment.getReferenceId()));
+    } else {
+      eventPublisher.publish(new PaymentEvents.PaymentCollectionFailed(payment.getReferenceId()));
+      throw new Exceptions.PaymentCollectionFailed(payment.getReferenceId());
+    }
+  }
+
+  public interface Exceptions {
+    class PaymentCollectionFailed extends BusinessException {
+      public PaymentCollectionFailed(ReferenceId id) {
+        super(format("Payment for order with id: %s failed", id.id().toString()));
+      }
+    }
   }
 }

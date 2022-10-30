@@ -9,6 +9,7 @@ import com.dtu.ddd.ecommerce.sales.product.application.command.EditProductQuanti
 import com.dtu.ddd.ecommerce.sales.product.application.command.EditProductTitleCommand;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.architecture.hexagonal.PrimaryPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@PrimaryPort
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor

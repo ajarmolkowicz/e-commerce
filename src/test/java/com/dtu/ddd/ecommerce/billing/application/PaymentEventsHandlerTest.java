@@ -13,9 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.valid4j.errors.RequireViolation;
 
 import static com.dtu.ddd.ecommerce.utils.Assertions.assertCaptureSatisfies;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,7 +75,12 @@ class PaymentEventsHandlerTest {
     when(paymentProvider.collect(new ReferenceId(orderId.id()))).thenReturn(false);
 
     //WHEN
-    handler.handle(new OrderEvents.OrderSubmitted(orderId, CartId.generate(), Money.parse("EUR 150"), address));
+    assertThatThrownBy(
+        //WHEN
+        () -> handler.handle(new OrderEvents.OrderSubmitted(orderId, CartId.generate(), Money.parse("EUR 150"), address))
+    )
+        //THEN
+        .isInstanceOf(PaymentEventsHandler.Exceptions.PaymentCollectionFailed.class);
 
     //THEN
     assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()), payment -> {

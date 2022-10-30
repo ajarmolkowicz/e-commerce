@@ -6,8 +6,10 @@ import com.dtu.ddd.ecommerce.sales.product.domain.ProductRepository;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jmolecules.ddd.annotation.Service;
 
 @RequiredArgsConstructor
+@Service
 public class OrderService {
   private final ProductRepository productRepository;
 
@@ -15,7 +17,7 @@ public class OrderService {
     return cart.getItems().stream().allMatch($ -> productRepository
         .find($.getProductId())
         .orElseThrow(() -> new ProductRepository.Exceptions.ProductNotFound($.getProductId()))
-        .orderableForGivenQuantity($.getQuantity()));
+        .enoughInStock($.getQuantity()));
   }
 
   public Set<OrderItem> assignPricesToItems(Set<CartItem> items) {

@@ -32,7 +32,7 @@ public class DatabaseConfiguration extends AbstractJdbcConfiguration {
   @Bean
   DataSource dataSource() {
     return new EmbeddedDatabaseBuilder()
-        .generateUniqueName(true)
+        .setName("e-commerce")
         .setType(EmbeddedDatabaseType.H2)
         .addScript("create_billing_db.sql")
         .addScript("create_sales_db.sql")

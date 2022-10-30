@@ -1,7 +1,10 @@
 package com.dtu.ddd.ecommerce.portal;
 
+import com.dtu.ddd.ecommerce.billing.domain.CollectionResult;
 import com.dtu.ddd.ecommerce.billing.domain.Payment;
+import com.dtu.ddd.ecommerce.billing.domain.PaymentProvider;
 import com.dtu.ddd.ecommerce.billing.domain.PaymentRepository;
+import com.dtu.ddd.ecommerce.billing.domain.ReferenceId;
 import com.dtu.ddd.ecommerce.sales.cart.domain.Cart;
 import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
 import com.dtu.ddd.ecommerce.sales.cart.domain.CartRepository;
@@ -11,7 +14,9 @@ import com.dtu.ddd.ecommerce.sales.order.domain.OrderRepository;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductId;
 import com.dtu.ddd.ecommerce.sales.product.domain.ProductRepository;
 import com.dtu.ddd.ecommerce.sales.product.domain.Quantity;
+import com.dtu.ddd.ecommerce.shared.vo.Address;
 import com.dtu.ddd.ecommerce.shipping.domain.Delivery;
+import com.dtu.ddd.ecommerce.shipping.domain.DeliveryId;
 import com.dtu.ddd.ecommerce.shipping.domain.DeliveryRepository;
 import java.util.Map;
 import java.util.UUID;
@@ -33,8 +38,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import static com.dtu.ddd.ecommerce.utils.Assertions.assertCaptureSatisfies;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -59,6 +66,9 @@ class OrderSubmissionIT {
 
   @SpyBean
   private DeliveryRepository deliveryRepository;
+
+  @SpyBean
+  private PaymentProvider paymentProvider;
 
   @DisplayName("Submit order with amount of each product requested being satisfied, should the order be submitted")
   @Test
@@ -103,9 +113,23 @@ class OrderSubmissionIT {
     assertThat(movie.getQuantity()).isEqualTo(new Quantity(2));
 
     assertCaptureSatisfies($ -> verify(deliveryRepository, times(2)).save($.capture()),
-        delivery -> assertThat(delivery.getId()).isNotNull(), Delivery.class);
+        delivery -> {
+          assertThat(delivery.getId()).isNotNull();
+          assertThat(delivery.getOrderId()).isNotNull();
+          assertThat(delivery.getAddress()).isEqualTo(new Address(
+              new Address.Street("Amager Strandvej 1"),
+              new Address.HouseNumber("st. th."),
+              new Address.City("Copenhagen"),
+              new Address.ZipCode("2300")
+          ));
+          assertThat(delivery.getState()).isEqualTo(Delivery.State.REGISTERED);
+        },
+        delivery -> assertThat(delivery.getState()).isEqualTo(Delivery.State.IN_DELIVERY), Delivery.class);
 
-    assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()), payment -> assertThat(payment.getId()).isNotNull(), Payment.class);
+    assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()), payment -> {
+      assertThat(payment.getId()).isNotNull();
+      assertThat(payment.getCollectionResult()).isEqualTo(new CollectionResult(true));
+    }, Payment.class);
   }
 
   @DisplayName("Submit order while products quantity changed after being added to the cart, should order not be submitted")
@@ -136,7 +160,6 @@ class OrderSubmissionIT {
     final var result = orderActions.submitOrder(
         TestConfig.cart_id, "Amager Strandvej 1", "st. th.", "Copenhagen", "2300"
     );
-
     //THEN
     assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(((Map<String, String>) result.getBody()).get("message")).isEqualTo(
@@ -191,18 +214,56 @@ class OrderSubmissionIT {
     final var movie = productRepository.find(new ProductId(movieId)).orElseThrow(RuntimeException::new);
     assertThat(movie.getQuantity()).isEqualTo(new Quantity(1));
 
-    assertCaptureSatisfies($ -> verify(deliveryRepository, times(2)).save($.capture()),
-        delivery -> assertThat(delivery.getId()).isNotNull(), Delivery.class);
-
-    assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()), payment -> assertThat(payment.getId()).isNotNull(), Payment.class);
-
     //AND WHEN
     final var result2 = orderActions.submitOrder(TestConfig.cart_2_id, "Amager Strandvej 1", "st. th.", "Copenhagen", "2300");
 
     //THEN
+    assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()),
+        payment -> assertThat(payment.getCollectionResult()).isEqualTo(new CollectionResult(true)), Payment.class);
+
     assertThat(result2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     assertThat(((Map<String, String>) result2.getBody()).get("message")).isEqualTo(
         format("Product demand of cart with id: %s is not satisfied", TestConfig.cart_2_id));
+  }
+
+  @DisplayName("Submit order, payment fails, should product quantity be restored and delivery cancelled")
+  @Test
+  void submit_order_payment_failed() {
+    //GIVEN
+    when(paymentProvider.collect(any(ReferenceId.class))).thenReturn(false);
+    final var bookResponse = productActions.add(
+        "Implementing Domain Driven Design",
+        "Vaughn Vernon",
+        25.0, "EUR", 5);
+    assertThat(bookResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final var bookId = bookResponse.getBody();
+    final var movieResponse = productActions.add(
+        "Murder on the Orient Express",
+        "Work of detective fiction by English writer Agatha Christie",
+        25.0, "EUR", 3);
+    assertThat(movieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final var movieId = movieResponse.getBody();
+    final var addBookResponse = cartActions.addProductToCart(TestConfig.cart_id, bookId, 2);
+    assertThat(addBookResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+    final var addMovieResponse = cartActions.addProductToCart(TestConfig.cart_id, movieId, 1);
+    assertThat(addMovieResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+    //WHEN
+    final var result = orderActions.submitOrder(TestConfig.cart_id, "Amager Strandvej 1", "st. th.", "Copenhagen", "2300");
+
+    //THEN
+    assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    assertThat(((Map<String, String>) result.getBody()).get("message")).startsWith("Payment for order with id: ").endsWith(" failed");
+
+    final var book = productRepository.find(new ProductId(bookId)).orElseThrow(RuntimeException::new);
+    assertThat(book.getQuantity()).isEqualTo(new Quantity(5));
+    final var movie = productRepository.find(new ProductId(movieId)).orElseThrow(RuntimeException::new);
+    assertThat(movie.getQuantity()).isEqualTo(new Quantity(3));
+
+    assertCaptureSatisfies($ -> verify(paymentRepository).save($.capture()),
+        payment -> assertThat(payment.getCollectionResult()).isEqualTo(new CollectionResult(false)), Payment.class);
+
+    verify(deliveryRepository).delete(any(DeliveryId.class));
   }
 
   @Lazy
@@ -229,7 +290,7 @@ class OrderSubmissionIT {
     static final UUID cart_2_id = UUID.randomUUID();
 
     @Bean
-    CommandLineRunner init(CartRepository cartRepository) {
+    CommandLineRunner initTest(CartRepository cartRepository) {
       return args -> {
         cartRepository.save(new Cart(new CartId(cart_id)));
         cartRepository.save(new Cart(new CartId(cart_1_id)));
