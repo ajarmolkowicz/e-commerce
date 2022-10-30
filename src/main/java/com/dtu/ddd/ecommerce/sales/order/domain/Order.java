@@ -14,6 +14,7 @@ import org.jmolecules.ddd.annotation.Identity;
 import org.joda.money.Money;
 
 import static java.lang.String.format;
+import static org.valid4j.Assertive.require;
 
 @AggregateRoot
 @Entity
@@ -26,6 +27,7 @@ public class Order {
 
   public Order(Set<OrderItem> items) {
     this.id = OrderId.generate();
+    require(!items.isEmpty(), "order items cannot be empty");
     this.items = items;
     this.submissionTime = new SubmissionTime(Instant.now());
   }

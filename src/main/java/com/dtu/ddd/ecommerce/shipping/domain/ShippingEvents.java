@@ -10,7 +10,7 @@ public interface ShippingEvents extends DomainEvent {
   @Value
   class OrderShipped implements ShippingEvents {
     UUID eventId;
-    Instant when;
+    Instant when; /* TODO : Assumption that event time equals shipping time is wrong*/
     OrderId orderId;
 
     public OrderShipped(OrderId orderId) {
