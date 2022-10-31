@@ -46,29 +46,21 @@ import static org.mockito.Mockito.when;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class OrderSubmissionIT {
-  @Autowired
-  private ProductActions productActions;
+  @Autowired private ProductActions productActions;
 
-  @Autowired
-  private CartActions cartActions;
+  @Autowired private CartActions cartActions;
 
-  @Autowired
-  private OrderActions orderActions;
+  @Autowired private OrderActions orderActions;
 
-  @SpyBean
-  private OrderRepository orderRepository;
+  @SpyBean private OrderRepository orderRepository;
 
-  @SpyBean
-  private ProductRepository productRepository;
+  @SpyBean private ProductRepository productRepository;
 
-  @SpyBean
-  private PaymentRepository paymentRepository;
+  @SpyBean private PaymentRepository paymentRepository;
 
-  @SpyBean
-  private DeliveryRepository deliveryRepository;
+  @SpyBean private DeliveryRepository deliveryRepository;
 
-  @SpyBean
-  private PaymentProvider paymentProvider;
+  @SpyBean private PaymentProvider paymentProvider;
 
   @DisplayName("Submit order with amount of each product requested being satisfied, should the order be submitted")
   @Test
@@ -97,7 +89,7 @@ class OrderSubmissionIT {
     //THEN
     assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertCaptureSatisfies($ -> verify(orderRepository).save($.capture()), order -> {
+    assertCaptureSatisfies($ -> verify(orderRepository, times(2)).save($.capture()), order -> {
       assertThat(order.getId()).isNotNull();
       assertThat(order.getItems()).containsExactlyInAnyOrder(
           new OrderItem(new ProductId(bookId), Money.parse("EUR 25"), new Quantity(2)),
@@ -105,7 +97,7 @@ class OrderSubmissionIT {
       );
       assertThat(order.total()).isEqualTo(Money.parse("EUR 75"));
       assertThat(order.getSubmissionTime()).isNotNull();
-    }, Order.class);
+    }, order -> assertThat(order.getShippingTime()).isNotNull(), Order.class);
 
     final var book = productRepository.find(new ProductId(bookId)).orElseThrow(RuntimeException::new);
     assertThat(book.getQuantity()).isEqualTo(new Quantity(3));
@@ -199,7 +191,7 @@ class OrderSubmissionIT {
     //THEN
     assertThat(result1.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    assertCaptureSatisfies($ -> verify(orderRepository).save($.capture()), order -> {
+    assertCaptureSatisfies($ -> verify(orderRepository, times(2)).save($.capture()), order -> {
       assertThat(order.getId()).isNotNull();
       assertThat(order.getItems()).containsExactlyInAnyOrder(
           new OrderItem(new ProductId(bookId), Money.parse("EUR 25"), new Quantity(4)),
@@ -207,7 +199,7 @@ class OrderSubmissionIT {
       );
       assertThat(order.total()).isEqualTo(Money.parse("EUR 150"));
       assertThat(order.getSubmissionTime()).isNotNull();
-    }, Order.class);
+    }, order -> assertThat(order.getShippingTime()).isNotNull(), Order.class);
 
     final var book = productRepository.find(new ProductId(bookId)).orElseThrow(RuntimeException::new);
     assertThat(book.getQuantity()).isEqualTo(new Quantity(1));

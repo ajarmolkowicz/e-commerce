@@ -1,5 +1,6 @@
 package com.dtu.ddd.ecommerce.sales.product.application;
 
+import com.dtu.ddd.ecommerce.sales.cart.domain.Cart;
 import com.dtu.ddd.ecommerce.sales.order.domain.Order;
 import com.dtu.ddd.ecommerce.sales.order.domain.OrderItem;
 import com.dtu.ddd.ecommerce.sales.order.domain.OrderRepository;
@@ -30,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.dtu.ddd.ecommerce.utils.Assertions.assertCaptureSatisfies;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -182,7 +184,12 @@ class ProductApplicationServiceTest {
     );
 
     //WHEN
-    service.deleteProduct(command);
+    assertThatThrownBy(
+        //WHEN
+        () -> service.deleteProduct(command)
+    )
+        //THEN
+        .isInstanceOf(ProductApplicationService.Exceptions.ProductContainedInUndeliveredOrders.class);
 
     //THEN
     verify(productRepository).find(product.getId());

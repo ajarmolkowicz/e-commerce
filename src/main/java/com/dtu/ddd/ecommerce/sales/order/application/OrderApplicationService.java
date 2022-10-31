@@ -12,7 +12,6 @@ import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.jmolecules.architecture.cqrs.annotation.CommandHandler;
 import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
-import org.jmolecules.architecture.hexagonal.PrimaryPort;
 
 import static java.lang.String.format;
 

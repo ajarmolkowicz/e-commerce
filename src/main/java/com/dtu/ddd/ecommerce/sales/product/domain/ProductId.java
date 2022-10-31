@@ -1,7 +1,5 @@
 package com.dtu.ddd.ecommerce.sales.product.domain;
 
-import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
-
 import java.util.UUID;
 
 public record ProductId(UUID id) {

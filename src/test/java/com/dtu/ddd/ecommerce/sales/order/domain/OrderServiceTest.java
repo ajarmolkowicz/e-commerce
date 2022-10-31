@@ -69,6 +69,7 @@ class OrderServiceTest {
     assertThat(enough).isFalse();
   }
 
+  @DisplayName("Order items prices are correctly assigned based on product price")
   @Test
   void orderItemPricesAssigned() {
     //GIVEN

@@ -30,11 +30,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CartManagementIT {
-  @Autowired
-  private ProductActions productActions;
+  @Autowired private ProductActions productActions;
 
-  @Autowired
-  private CartActions cartActions;
+  @Autowired private CartActions cartActions;
 
   @DisplayName("Add the same product to the cart twice, should the second request fail")
   @Test

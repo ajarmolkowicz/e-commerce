@@ -1,8 +1,6 @@
 package com.dtu.ddd.ecommerce.sales.order.domain;
 
-import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
 import com.dtu.ddd.ecommerce.shared.aggregates.Version;
-
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Set;
@@ -13,7 +11,6 @@ import org.jmolecules.ddd.annotation.Entity;
 import org.jmolecules.ddd.annotation.Identity;
 import org.joda.money.Money;
 
-import static java.lang.String.format;
 import static org.valid4j.Assertive.require;
 
 @AggregateRoot
