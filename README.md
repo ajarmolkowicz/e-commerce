@@ -1,5 +1,5 @@
 # Prerequisites
-* [Java JDK 17](https://openjdk.org/projects/jdk/17/)
+* [JDK 17](https://openjdk.org/projects/jdk/17/)
 * [Maven 3.6.3](https://maven.apache.org/download.cgi)
 
 # How to build the project?
