@@ -4,14 +4,14 @@ import com.dtu.ddd.ecommerce.sales.order.application.OrderApplicationService;
 import com.dtu.ddd.ecommerce.sales.order.application.commands.SubmitOrderCommand;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.jmolecules.architecture.hexagonal.PrimaryPort;
+import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@PrimaryPort
+@PrimaryAdapter
 @RestController
 @RequestMapping("/orders")
 @RequiredArgsConstructor

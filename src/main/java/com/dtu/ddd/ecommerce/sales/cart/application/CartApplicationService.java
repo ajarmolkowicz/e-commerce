@@ -1,6 +1,5 @@
 package com.dtu.ddd.ecommerce.sales.cart.application;
 
-import com.dtu.ddd.ecommerce.billing.domain.ReferenceId;
 import com.dtu.ddd.ecommerce.sales.cart.application.command.AddProductToCartCommand;
 import com.dtu.ddd.ecommerce.sales.cart.application.command.DeleteProductFromCartCommand;
 import com.dtu.ddd.ecommerce.sales.cart.domain.CartEvents;
@@ -11,11 +10,11 @@ import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
 import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.jmolecules.architecture.cqrs.annotation.CommandHandler;
-import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
+import org.jmolecules.architecture.hexagonal.PrimaryPort;
 
 import static java.lang.String.format;
 
-@PrimaryAdapter
+@PrimaryPort
 @RequiredArgsConstructor
 public class CartApplicationService {
   private final CartRepository cartRepository;

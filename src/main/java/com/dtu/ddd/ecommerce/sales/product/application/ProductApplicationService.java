@@ -1,6 +1,5 @@
 package com.dtu.ddd.ecommerce.sales.product.application;
 
-import com.dtu.ddd.ecommerce.sales.cart.domain.CartId;
 import com.dtu.ddd.ecommerce.sales.order.domain.OrderRepository;
 import com.dtu.ddd.ecommerce.sales.product.application.command.AddProductCommand;
 import com.dtu.ddd.ecommerce.sales.product.application.command.DeleteProductCommand;
@@ -16,11 +15,11 @@ import com.dtu.ddd.ecommerce.shared.event.DomainEventPublisher;
 import com.dtu.ddd.ecommerce.shared.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.jmolecules.architecture.cqrs.annotation.CommandHandler;
-import org.jmolecules.architecture.hexagonal.PrimaryAdapter;
+import org.jmolecules.architecture.hexagonal.PrimaryPort;
 
 import static java.lang.String.format;
 
-@PrimaryAdapter
+@PrimaryPort
 @RequiredArgsConstructor
 public class ProductApplicationService {
   private final ProductRepository productRepository;

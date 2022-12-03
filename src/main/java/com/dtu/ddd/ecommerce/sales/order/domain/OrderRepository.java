@@ -14,7 +14,7 @@ public interface OrderRepository {
 
   void save(Order order);
 
-  /*TODO : Move to read model */ List<Order> findNotDeliveredContainingProduct(ProductId productId);
+  List<Order> findNotDeliveredContainingProduct(ProductId productId);
 
   interface Exceptions {
     class OrderNotFound extends BusinessException {
